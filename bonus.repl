@@ -1,0 +1,16 @@
+>>> # Continued from previous session
+>>> def profit_with_bonus(first, last):
+...     if last >= first * 1.01:
+...         return (last - first) * 1.1
+...     else:
+...         return last - first
+...
+>>> profit_with_bonus(10, 12)
+2.2
+>>> vectorized_profit_with_bonus = np.vectorize(profit_with_bonus)
+>>> profit_with_bonus
+<function profit_with_bonus at 0x100d5bec0>
+>>> vectorized_profit_with_bonus
+<numpy.vectorize object at 0x101ee1010>
+>>> vectorized_profit_with_bonus(portfolio["Mon"], portfolio["Fri"])
+array([ 13.2 ,   0.7 ,   0.99, -13.  ,   0.7 ,  -3.1 ])

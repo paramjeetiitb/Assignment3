@@ -1,0 +1,43 @@
+>>> from pathlib import Path
+>>> import numpy as np
+>>> import numpy.lib.recfunctions as rfn
+>>> issued_dtypes = [
+...     ("id", "i8"),
+...     ("payee", "U10"),
+...     ("amount", "f8"),
+...     ("date_issued", "U10"),
+... ]
+>>> has_dupes = np.loadtxt(Path("issued_dupe.csv"), delimiter=",", dtype=issued_dtypes, skiprows=1)
+>>> has_dupes
+array([(1341, 'K Starmer', 150., '2024-03-29'),
+       (1342, 'R Sunak', 175., '2024-03-29'),
+       (1343, 'L Truss',  30., '2024-03-29'),
+       (1344, 'B Johnson',  45., '2024-03-22'),
+       (1344, 'B Johnson',  45., '2024-03-22'),
+       (1345, 'T May',  65., '2024-03-22'),
+       (1346, 'D Cameron', 430., '2024-03-22'),
+       (1347, 'G Brown', 100., '2024-03-15'),
+       (1348, 'T Blair', 250., '2024-03-15'),
+       (1349, 'J Major', 500., '2024-03-15'),
+       (1350, 'M Thatcher', 220., '2024-03-15')],
+      dtype=[('id', '<i8'), ('payee', '<U10'), ('amount', '<f8'), ('date_issued', '<U10')])
+>>> rfn.find_duplicates(np.ma.asarray(has_dupes))
+masked_array(data=[(1344, 'B Johnson', 45.0, '2024-03-22'),
+                   (1344, 'B Johnson', 45.0, '2024-03-22')],
+             mask=[(False, False, False, False),
+                   (False, False, False, False)],
+       fill_value=(999999, 'N/A', 1e+20, 'N/A'),
+            dtype=[('id', '<i8'), ('payee', '<U10'), ('amount', '<f8'), ('date_issued', '<U10')])
+>>> no_more = np.unique(has_dupes, axis=0)
+>>> no_more
+array([(1341, 'K Starmer', 150., '2024-03-29'),
+       (1342, 'R Sunak', 175., '2024-03-29'),
+       (1343, 'L Truss',  30., '2024-03-29'),
+       (1344, 'B Johnson',  45., '2024-03-22'),
+       (1345, 'T May',  65., '2024-03-22'),
+       (1346, 'D Cameron', 430., '2024-03-22'),
+       (1347, 'G Brown', 100., '2024-03-15'),
+       (1348, 'T Blair', 250., '2024-03-15'),
+       (1349, 'J Major', 500., '2024-03-15'),
+       (1350, 'M Thatcher', 220., '2024-03-15')],
+      dtype=[('id', '<i8'), ('payee', '<U10'), ('amount', '<f8'), ('date_issued', '<U10')])

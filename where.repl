@@ -1,0 +1,16 @@
+>>> # Continuing from previous REPL...
+>>> def profit_with_bonus(first, last):
+...     if last >= first * 1.01:
+...         return (last - first) * 1.1
+...     else:
+...         return last - first
+...
+>>> vectorized_profit_with_bonus = np.vectorize(profit_with_bonus)
+>>> vectorized_profit_with_bonus(portfolio["Mon"], portfolio["Fri"])
+array([ 13.2 ,   0.7 ,   0.99, -13.  ,   0.7 ,  -3.1 ])
+>>> np.where(
+...     portfolio["Fri"] > portfolio["Mon"] * 1.01,
+...     (portfolio["Fri"] - portfolio["Mon"]) * 1.1,
+...     portfolio["Fri"] - portfolio["Mon"]
+... )
+array([ 13.2 ,   0.7 ,   0.99, -13.  ,   0.7 ,  -3.1 ])

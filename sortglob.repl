@@ -1,0 +1,26 @@
+>>> from pathlib import Path
+>>> for csv_file in Path.cwd().glob("file*.csv"):
+...     print(csv_file.name)
+...
+file11.csv
+file10.csv
+file1.csv
+file2.csv
+file3.csv
+>>> for csv_file in sorted(Path.cwd().glob("file*.csv")):
+...     print(csv_file.name)
+...
+file1.csv
+file10.csv
+file11.csv
+file2.csv
+file3.csv
+>>> from natsort import natsorted
+>>> for csv_file in natsorted(Path.cwd().glob("file*.csv")):
+...     print(csv_file.name)
+...
+file1.csv
+file2.csv
+file3.csv
+file10.csv
+file11.csv

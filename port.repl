@@ -1,0 +1,61 @@
+>>> import numpy as np
+>>> from pathlib import Path
+>>> days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+>>> days_dtype=[(day, "f8") for day in days]
+>>> days_dtype
+[('Mon', 'f8'), ('Tue', 'f8'), ('Wed', 'f8'), ('Thu', 'f8'), ('Fri', 'f8')]
+>>> company_dtype=[("company", "U20"), ("sector", "U20")]
+>>> portfolio_dtype = np.dtype(company_dtype + days_dtype)
+>>> portfolio_dtype
+dtype([('company', '<U20'), ('sector', '<U20'), ('Mon', '<f8'), ('Tue', '<f8'), ('Wed', '<f8'), ('Thu', '<f8'), ('Fri', '<f8')])
+>>> portfolio = np.zeros(6, dtype=portfolio_dtype)
+>>> portfolio
+array([('', '', 0., 0., 0., 0., 0.), ('', '', 0., 0., 0., 0., 0.),
+       ('', '', 0., 0., 0., 0., 0.), ('', '', 0., 0., 0., 0., 0.),
+       ('', '', 0., 0., 0., 0., 0.), ('', '', 0., 0., 0., 0., 0.)],
+      dtype=[('company', '<U20'), ('sector', '<U20'), ('Mon', '<f8'), ('Tue', '<f8'), ('Wed', '<f8'), ('Thu', '<f8'), ('Fri', '<f8')])
+>>> companies = np.loadtxt(Path("companies.csv"), delimiter=",", dtype=company_dtype, skiprows=1).reshape(6)
+>>> companies
+array([('A_Comp', 'technology'), ('B_Comp', 'finance'),
+       ('C_Comp', 'healthcare'), ('D_Comp', 'technology'),
+       ('E_Comp', 'finance'), ('F_Comp', 'healthcare')],
+      dtype=[('company', '<U20'), ('sector', '<U20')])
+>>> portfolio[["company", "sector"]] = companies
+>>> portfolio
+array([('A_Comp', 'technology', 0., 0., 0., 0., 0.),
+       ('B_Comp', 'finance', 0., 0., 0., 0., 0.),
+       ('C_Comp', 'healthcare', 0., 0., 0., 0., 0.),
+       ('D_Comp', 'technology', 0., 0., 0., 0., 0.),
+       ('E_Comp', 'finance', 0., 0., 0., 0., 0.),
+       ('F_Comp', 'healthcare', 0., 0., 0., 0., 0.)],
+      dtype=[('company', '<U20'), ('sector', '<U20'), ('Mon', '<f8'), ('Tue', '<f8'), ('Wed', '<f8'), ('Thu', '<f8'), ('Fri', '<f8')])
+>>> prices_dtype = [("company", "U20"), ("day", "f8")]
+>>> file_days = zip(days, sorted(Path.cwd().glob("prices-?.csv")))
+>>> file_days
+<zip object at 0x103eb1880>
+>>> list(file_days)
+[
+    ('Mon', PosixPath('/Users/ctrudeau/code/prices-1.csv')),
+    ('Tue', PosixPath('/Users/ctrudeau/code/prices-2.csv')),
+    ('Wed', PosixPath('/Users/ctrudeau/code/prices-3.csv')),
+    ('Thu', PosixPath('/Users/ctrudeau/code/prices-4.csv')),
+    ('Fri', PosixPath('/Users/ctrudeau/code/prices-5.csv'))
+]
+>>> file_days = zip(days, sorted(Path.cwd().glob("prices-?.csv")))
+>>> for day, csv_file in file_days:
+...     portfolio[day] = np.loadtxt(csv_file.name, delimiter=",", dtype=prices_dtype, skiprows=1)["day"]
+...
+>>> portfolio
+array([('A_Comp', 'technology', 100.5, 101.2, 102. , 101.8, 112.5),
+       ('B_Comp', 'finance', 200.1, 199.8, 200.5, 201. , 200.8),
+       ('C_Comp', 'healthcare',  50.3,  50.5,  51. ,  50.8,  51.2),
+       ('D_Comp', 'technology', 110.5, 101.2, 102. , 111.8,  97.5),
+       ('E_Comp', 'finance', 200.1, 200.8, 200.5, 211. , 200.8),
+       ('F_Comp', 'healthcare',  55.3,  50.5,  53. ,  50.8,  52.2)],
+      dtype=[('company', '<U20'), ('sector', '<U20'), ('Mon', '<f8'), ('Tue', '<f8'), ('Wed', '<f8'), ('Thu', '<f8'), ('Fri', '<f8')])
+>>> portfolio[portfolio["sector"] == "technology"]["Fri"]
+array([112.5,  97.5])
+>>> portfolio[portfolio["sector"] == "technology"]["Fri"] * 250
+array([28125., 24375.])
+>>> sum(portfolio[portfolio["sector"] == "technology"]["Fri"] * 250)
+np.float64(52500.0)

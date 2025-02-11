@@ -1,0 +1,22 @@
+>>> # Continuing from previous lesson...
+>>> tech_mask = portfolio["sector"] == "technology"
+>>> tech_sector = portfolio[tech_mask]["company"]
+>>> tech_mask
+array([ True, False, False,  True, False, False])
+>>> tech_sector
+array(['A_Comp', 'D_Comp'], dtype='<U20')
+>>> tech_value = portfolio[tech_mask]["Fri"] * 250
+>>> tech_value
+array([28125., 24375.])
+>>> import matplotlib.pyplot as plt
+>>> (
+...     plt.bar(x=tech_sector, height=tech_value)[0]
+...     .set_color("g")
+... )
+>>> plt.xlabel("Tech Companies")
+Text(0.5, 47.04444444444444, 'Tech Companies')
+>>> plt.ylabel("Friday Price ($)")
+Text(40.81944444444443, 0.5, 'Friday Price ($)')
+>>> plt.title("Tech Share Valuation")
+Text(0.5, 1.0, 'Tech Share Valuation')
+>>> plt.show()

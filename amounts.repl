@@ -1,0 +1,35 @@
+>>> # Using combined array from previous lesson
+>>> combined
+rec.array([(1341, 'K Starmer', 150., 150., '2024-03-29', '2024-04-12'),
+           (1342, 'R Sunak', 175., 175., '2024-03-29', '2024-04-16'),
+           (1343, 'L Truss',  30.,  30., '2024-03-29', '2024-04-12'),
+           (1345, 'T May',  65.,  65., '2024-03-22', '2024-04-12'),
+           (1346, 'D Cameron', 430., 430., '2024-03-22', '2024-04-08'),
+           (1349, 'J Major', 500., 500., '2024-03-15', '2024-04-08'),
+           (1350, 'M Thatcher', 220., 220., '2024-03-15', '2024-04-15')],
+          dtype=[('id', '<i8'), ('payee', '<U10'), ('amount1', '<f8'), ('amount2', '<f8'), ('date_issued', '<U10'), ('date_cashed', '<U10')])
+>>> combined[["payee", "date_issued", "date_cashed", "amount"]]
+Traceback (most recent call last):
+  File "<python-input-12>", line 1, in <module>
+    combined[["payee", "date_issued", "date_cashed", "amount"]]
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "lib/python3.13/site-packages/numpy/_core/records.py", line 489, in __getitem__
+    obj = super().__getitem__(indx)
+KeyError: 'amount'
+>>> combined.dtype
+dtype((numpy.record, [('id', '<i8'), ('payee', '<U10'), ('amount1', '<f8'), ('amount2', '<f8'), ('date_issued', '<U10'), ('date_cashed', '<U10')]))
+>>> combined[["payee", "date_issued", "date_cashed", "amount1"]]
+rec.array([('K Starmer', '2024-03-29', '2024-04-12', 150.),
+           ('R Sunak', '2024-03-29', '2024-04-16', 175.),
+           ('L Truss', '2024-03-29', '2024-04-12',  30.),
+           ('T May', '2024-03-22', '2024-04-12',  65.),
+           ('D Cameron', '2024-03-22', '2024-04-08', 430.),
+           ('J Major', '2024-03-15', '2024-04-08', 500.),
+           ('M Thatcher', '2024-03-15', '2024-04-15', 220.)],
+          dtype={'names': ['payee', 'date_issued', 'date_cashed', 'amount1'], 'formats': ['<U10', '<U10', '<U10', '<f8'], 'offsets': [8, 64, 104, 48], 'itemsize': 144})
+>>> # Find uncashed checks
+>>> outstanding = [check_id for check_id in issued_checks["id"] if check_id not in cashed_checks["id"]]
+>>> outstanding
+[np.int64(1344), np.int64(1347), np.int64(1348)]
+>>> [int(check_id) for check_id in outstanding]
+[1344, 1347, 1348]

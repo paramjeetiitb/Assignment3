@@ -1,0 +1,29 @@
+>>> from pathlib import Path
+>>> import numpy as np
+>>> array = np.zeros((3, 2, 3))
+>>> array
+array([[[0., 0., 0.],
+        [0., 0., 0.]],
+
+       [[0., 0., 0.],
+        [0., 0., 0.]],
+
+       [[0., 0., 0.],
+        [0., 0., 0.]]])
+>>> id(array)
+4347266704
+>>> # Loop over each file and read it into the array
+>>> for count, csv_file in enumerate(Path.cwd().glob("file?.csv")):
+...     array[count] = np.loadtxt(csv_file.name, delimiter=",")
+...
+>>> array
+array([[[1.1, 1.2, 1.3],
+        [1.4, 1.5, 1.6]],
+
+       [[2.1, 2.2, 2.3],
+        [2.4, 2.5, 2.6]],
+
+       [[3.1, 3.2, 3.3],
+        [3.4, 3.5, 3.6]]])
+>>> id(array)
+4347266704

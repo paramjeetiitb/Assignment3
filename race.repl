@@ -1,0 +1,34 @@
+>>> # Structured arrays
+>>> import numpy as np
+>>> race_results = np.array(
+...     [
+...         ("At The Back", 1.2, 3),
+...         ("Fast Eddie", 1.3, 1),
+...         ("Almost There", 1.1, 2),
+...     ],
+...     dtype=[
+...         ("horse_name", "U12"),
+...         ("price", "f4"),
+...         ("position", "i4")
+...     ]
+... )
+>>> race_results
+array([('At The Back', 1.2, 3), ('Fast Eddie', 1.3, 1),
+       ('Almost There', 1.1, 2)],
+      dtype=[('horse_name', '<U12'), ('price', '<f4'), ('position', '<i4')])
+>>> race_results["horse_name"]
+array(['At The Back', 'Fast Eddie', 'Almost There'], dtype='<U12')
+>>> np.sort(race_results, order="position")
+array([('Fast Eddie', 1.3, 1), ('Almost There', 1.1, 2),
+       ('At The Back', 1.2, 3)],
+      dtype=[('horse_name', '<U12'), ('price', '<f4'), ('position', '<i4')])
+>>> np.sort(race_results, order="position")[["horse_name", "price"]]
+array([('Fast Eddie', 1.3), ('Almost There', 1.1), ('At The Back', 1.2)],
+      dtype={'names': ['horse_name', 'price'], 'formats': ['<U12', '<f4'], 'offsets': [0, 48], 'itemsize': 56})
+>>> race_results[race_results["position"] == 1]
+array([('Fast Eddie', 1.3, 1)],
+      dtype=[('horse_name', '<U12'), ('price', '<f4'), ('position', '<i4')])
+>>> race_results[race_results["position"] == 1]["horse_name"]
+array(['Fast Eddie'], dtype='<U12')
+>>> race_results[race_results["position"] == 1]["horse_name"][0]
+np.str_('Fast Eddie')

@@ -1,0 +1,56 @@
+>>> import numpy as np
+>>> import numpy.lib.recfunctions as rfn
+>>> from pathlib import Path
+>>> # Declare data type for future use
+>>> issued_dtypes = [
+...     ("id", "i8"),
+...     ("payee", "U10"),
+...     ("amount", "f8"),
+...     ("date_issued", "U10"),
+... ]
+>>> cashed_dtypes = [
+...     ("id", "i8"),
+...     ("amount", "f8"),
+...     ("date_cashed", "U10")
+... ]
+>>> # Read data from CSV files
+>>> issued_checks = np.loadtxt(Path("issued_checks.csv"), delimiter=",", dtype=issued_dtypes, skiprows=1)
+>>> cashed_checks = np.loadtxt(Path("cashed_checks.csv"), delimiter=",", dtype=cashed_dtypes, skiprows=1)
+>>> issued_checks
+array([(1341, 'K Starmer', 150., '2024-03-29'),
+       (1342, 'R Sunak', 175., '2024-03-29'),
+       (1343, 'L Truss',  30., '2024-03-29'),
+       (1344, 'B Johnson',  45., '2024-03-22'),
+       (1345, 'T May',  65., '2024-03-22'),
+       (1346, 'D Cameron', 430., '2024-03-22'),
+       (1347, 'G Brown', 100., '2024-03-15'),
+       (1348, 'T Blair', 250., '2024-03-15'),
+       (1349, 'J Major', 500., '2024-03-15'),
+       (1350, 'M Thatcher', 220., '2024-03-15')],
+      dtype=[('id', '<i8'), ('payee', '<U10'), ('amount', '<f8'), ('date_issued', '<U10')])
+>>> cashed_checks
+array([(1341, 150., '2024-04-12'), (1342, 175., '2024-04-16'),
+       (1343,  30., '2024-04-12'), (1345,  65., '2024-04-12'),
+       (1346, 430., '2024-04-08'), (1349, 500., '2024-04-08'),
+       (1350, 220., '2024-04-15')],
+      dtype=[('id', '<i8'), ('amount', '<f8'), ('date_cashed', '<U10')])
+>>> # Reconcile based on "id" field
+>>> combined = rfn.rec_join("id", issued_checks, cashed_checks, jointype="inner")
+>>> combined
+rec.array([(1341, 'K Starmer', 150., 150., '2024-03-29', '2024-04-12'),
+           (1342, 'R Sunak', 175., 175., '2024-03-29', '2024-04-16'),
+           (1343, 'L Truss',  30.,  30., '2024-03-29', '2024-04-12'),
+           (1345, 'T May',  65.,  65., '2024-03-22', '2024-04-12'),
+           (1346, 'D Cameron', 430., 430., '2024-03-22', '2024-04-08'),
+           (1349, 'J Major', 500., 500., '2024-03-15', '2024-04-08'),
+           (1350, 'M Thatcher', 220., 220., '2024-03-15', '2024-04-15')],
+          dtype=[('id', '<i8'), ('payee', '<U10'), ('amount1', '<f8'), ('amount2', '<f8'), ('date_issued', '<U10'), ('date_cashed', '<U10')])
+>>> combined[["payee", "date_issued", "date_cashed"]]
+rec.array([('K Starmer', '2024-03-29', '2024-04-12'),
+           ('R Sunak', '2024-03-29', '2024-04-16'),
+           ('L Truss', '2024-03-29', '2024-04-12'),
+           ('T May', '2024-03-22', '2024-04-12'),
+           ('D Cameron', '2024-03-22', '2024-04-08'),
+           ('J Major', '2024-03-15', '2024-04-08'),
+           ('M Thatcher', '2024-03-15', '2024-04-15')],
+          dtype={'names': ['payee', 'date_issued', 'date_cashed'], 'formats': ['<U10', '<U10', '<U10'], 'offsets': [8, 64, 104], 'itemsize': 144})
